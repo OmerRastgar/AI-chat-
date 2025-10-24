@@ -22,10 +22,23 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+        # enable npm caching keyed by package.json so installs are faster
+        cache: 'npm'
+        cache-dependency-path: package.json
 
-    - name: Build
+    - name: Install dependencies
       run: |
-        npm install
-        # Explicitly install webpack and its CLI to avoid the npx prompt
-        npm install webpack webpack-cli
-        npx webpack
+        # Prefer a clean install if a lockfile exists, otherwise fall back to npm install
+        npm ci --prefer-offline --no-audit --progress=false || npm install --no-audit --progress=false
+
+    - name: Build (production)
+      run: |
+        # Use the project's build script to ensure webpack config is respected
+        npm run build
+
+    - name: Upload build artifacts
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: webpack-dist
+        path: dist/
