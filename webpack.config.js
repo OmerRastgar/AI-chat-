@@ -43,6 +43,10 @@ module.exports = {
     ],
     compress: true,
     port: 3000,
+    // bind to all interfaces so the dev container's server is reachable from the host
+    host: '0.0.0.0',
+    // allow connections from forwarded ports / other hosts (useful in remote/devcontainer setups)
+    allowedHosts: 'all',
     historyApiFallback: true,
   },
 };
