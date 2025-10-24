@@ -20,6 +20,13 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'assets/images/[name][hash][ext]'
+        }
+      },
     ],
   },
   plugins: [
@@ -29,9 +36,11 @@ module.exports = {
     new Dotenv(),
   ],
   devServer: {
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
+    static: [
+      { directory: path.join(__dirname, 'dist') },
+      // serve project root during development so images placed in repo root are available
+      { directory: path.join(__dirname) },
+    ],
     compress: true,
     port: 3000,
     historyApiFallback: true,

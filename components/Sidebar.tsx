@@ -3,6 +3,18 @@ import { Tab } from '../types';
 import { ChatIcon } from './icons/ChatIcon';
 import { PolicyIcon } from './icons/PolicyIcon';
 import { ChevronLeftIcon } from './icons/ChevronLeftIcon';
+// TypeScript may sometimes fail to resolve image modules during type-checking in this setup.
+// Use @ts-ignore on these imports so webpack's asset/resource handles bundling at build time.
+// The declarations in `src/types/images.d.ts` should cover these, but ts-loader can be picky.
+// @ts-ignore
+import darkCollapsed from '../src/assets/images/dark-background-collapsed.svg';
+// @ts-ignore
+import darkCollapsedThin from '../src/assets/images/dark-background-collapsed-to-thin.svg';
+// @ts-ignore
+import lightCollapsed from '../src/assets/images/light-background-collapsed.svg';
+// @ts-ignore
+import lightCollapsedThin from '../src/assets/images/light-background-collapsed-to-thin.svg';
+
 
 interface SidebarProps {
   isOpen: boolean;
@@ -41,16 +53,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isCollapsed, setIs
         {/* LOGO AREA */}
         <div className={`flex items-center transition-all duration-300 w-full ${isCollapsed && !isMobile ? 'justify-center' : 'justify-start'}`}>
           {isCollapsed && !isMobile ? (
-            <img 
-              src={theme === 'dark' ? '/dark background collapsed to thin.png' : '/light background collapsed to thin.png'} 
-              alt="CyberGaar Icon"
-              className="h-8 w-8 object-contain"
-            />
+                <img 
+                  src={theme === 'dark' ? darkCollapsedThin : lightCollapsedThin} 
+                  alt="CyberGaar Icon"
+                  className={`h-10 w-10 object-contain ${isMobile ? '' : ''}`}
+                  style={isMobile ? { transform: 'scale(2, 2)', transformOrigin: 'center', display: 'block', margin: '0 auto' } : { transform: 'scale(2, 2)', transformOrigin: 'center', display: 'block', margin: '0 auto' }}
+
+                />
           ) : (
              <img 
-              src={theme === 'dark' ? '/dark background collapsed.png' : '/light background collapsed.png'} 
+              src={theme === 'dark' ? darkCollapsed : lightCollapsed} 
               alt="CyberGaar Logo"
-              className="h-8 object-contain"
+              className="h-10 w-auto object-contain"
+              style={isMobile ? { transform: 'scale(4, 3)', transformOrigin: 'center', display: 'block', margin: '0 auto' } : { transform: 'scale(4, 3)', transformOrigin: 'center', display: 'block', margin: '0 auto' }}
             />
           )}
         </div>
