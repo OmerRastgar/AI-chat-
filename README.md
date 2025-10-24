@@ -2,7 +2,9 @@
 
 CyberGaar is a sophisticated web application designed to be an AI-powered partner for navigating the complexities of cybersecurity. It features an expert-tuned large language model, real-time source verification, and domain-specific intelligence to provide accurate and actionable insights.
 
-![CyberGaar Screenshot](https://storage.googleapis.com/aistudio-project-images/b48d2874-9548-4384-a14a-71424e6c1e57.png)
+<img width="2025" height="1085" alt="image" src="https://github.com/user-attachments/assets/09d2927b-b377-48d6-8e2c-c6b4eeb286be" />
+<img width="2008" height="1068" alt="image" src="https://github.com/user-attachments/assets/70e1de2d-00a9-4ce4-8857-9e38a5ec238b" />
+
 
 ## Core Features
 
