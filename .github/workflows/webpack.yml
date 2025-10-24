@@ -40,5 +40,7 @@ jobs:
       if: success()
       uses: actions/upload-artifact@v4
       with:
-        name: webpack-dist
+        # make artifact name unique per run/matrix to avoid 409 Conflict when the same
+        # workflow job attempts to upload an artifact with the same name more than once
+        name: webpack-dist-${{ matrix.node-version }}-${{ github.run_id }}
         path: dist/
