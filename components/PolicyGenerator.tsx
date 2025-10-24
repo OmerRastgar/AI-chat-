@@ -348,11 +348,11 @@ const PolicyGenerator: React.FC = () => {
 
             <div className="flex justify-center">
                 <button 
-                    onClick={handleGeneratePolicy} 
-                    disabled={!isFormValid || view === 'loading'}
+                    onClick={handleGeneratePolicy}
+                    disabled={!isFormValid}
                     className="flex items-center justify-center gap-2 w-full max-w-xs px-6 py-3 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {view === 'loading' ? (<><span>Generating...</span></>) : ('Generate Secure Policy')}
+                    {'Generate Secure Policy'}
                 </button>
             </div>
 

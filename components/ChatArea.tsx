@@ -68,7 +68,7 @@ const InputFooter: React.FC<InputFooterProps> = ({ standards, activeStandard, se
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask about cybersecurity..."
+                placeholder="Your cyber companion awaits. Ask away..."
                 className="flex-1 bg-transparent resize-none focus:outline-none text-light-text dark:text-dark-text placeholder-gray-500 dark:placeholder-gray-400 max-h-40"
                 rows={1}
               />

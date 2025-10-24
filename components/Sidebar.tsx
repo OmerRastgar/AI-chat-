@@ -12,9 +12,10 @@ interface SidebarProps {
   activeTab: Tab;
   setActiveTab: (tab: Tab) => void;
   isMobile: boolean;
+  theme: 'dark' | 'light';
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed, activeTab, setActiveTab, isMobile }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed, activeTab, setActiveTab, isMobile, theme }) => {
 
   const NavButton: React.FC<{ tabName: Tab; children: React.ReactNode; icon: React.ReactNode }> = ({ tabName, children, icon }) => (
     <button 
@@ -35,12 +36,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isCollapsed, setIs
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-light-accent/80 dark:bg-dark-accent/80 backdrop-blur-lg border-r border-light-border dark:border-dark-border">
-      <div className={`flex items-center p-4 border-b border-light-border dark:border-dark-border h-16 flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
-        <h1 className={`text-2xl font-bold text-light-text dark:text-dark-text transition-all duration-200 ease-in-out overflow-hidden ${isCollapsed && !isMobile ? 'opacity-0 w-0' : 'opacity-100'}`}>CyberGaar</h1>
+      <div className="relative flex items-center p-4 border-b border-light-border dark:border-dark-border h-16 flex-shrink-0">
+        
+        {/* LOGO AREA */}
+        {isCollapsed && !isMobile ? (
+          <div className="w-full flex justify-center">
+            <img 
+              src={theme === 'dark' ? 'for dark background collapsed to thin .png' : 'for light background collapsed to thin .png'}
+              alt="CyberGaar Icon"
+              className="h-8 w-8"
+            />
+          </div>
+        ) : (
+          <img 
+            src={theme === 'dark' ? 'for dark background collapsed .png' : 'for light background collapsed .png'}
+            alt="CyberGaar Logo"
+            className="h-8"
+          />
+        )}
+        
+        {/* BUTTON AREA */}
         {!isMobile && (
           <button 
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-full transition-colors duration-200 text-light-text/80 dark:text-dark-text/80 hover:bg-light-accent-hover dark:hover:bg-dark-accent-hover"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full transition-colors duration-200 text-light-text/80 dark:text-dark-text/80 hover:bg-light-accent-hover dark:hover:bg-dark-accent-hover"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <ChevronLeftIcon className={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />

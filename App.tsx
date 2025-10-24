@@ -142,6 +142,7 @@ const App: React.FC = () => {
         setIsCollapsed={setIsSidebarCollapsed}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        theme={theme}
       />
       <div 
         className={`absolute inset-0 transition-transform duration-300 ease-in-out md:left-auto ${isMobile ? (isSidebarOpen ? 'translate-x-[80%]' : 'translate-x-0') : (isSidebarCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-14rem)]')}`}
