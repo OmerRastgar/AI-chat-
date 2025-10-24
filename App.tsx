@@ -2,13 +2,15 @@ import React, { useState, useCallback, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
 import PolicyGeneratorView from './components/PolicyGeneratorView';
-import WelcomePopup from './components/WelcomePopup'; // Import the new component
+import WelcomePopup from './components/WelcomePopup';
 import { Message, Standard, Tab } from './types';
 import { STANDARDS } from './constants';
 import { MenuIcon } from './components/icons/MenuIcon';
 import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const API_KEY = process.env.API_KEY;
+
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -19,10 +21,9 @@ const App: React.FC = () => {
   const [isAiResponding, setIsAiResponding] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [showWelcomePopup, setShowWelcomePopup] = useState(false); // State for the popup
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
 
   useEffect(() => {
-    // Check local storage to see if the user has visited before
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcomePopup');
     if (!hasSeenWelcome) {
       setShowWelcomePopup(true);
@@ -37,19 +38,19 @@ const App: React.FC = () => {
     const mobile = window.innerWidth < 768;
     setIsMobile(mobile);
     if (mobile) {
-      setIsSidebarOpen(false); // Close sidebar on switch to mobile
+      setIsSidebarOpen(false);
     }
   }, []);
 
   useEffect(() => {
-    handleResize(); // Set initial state
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [handleResize]);
   
   const handleSetStandard = (standard: Standard) => {
     setActiveStandard(standard);
-    setMessages([]); // Clear messages when standard changes
+    setMessages([]);
   };
 
   const handleSendMessage = useCallback(async (text: string) => {
@@ -64,6 +65,18 @@ const App: React.FC = () => {
 
     setMessages(prev => [...prev, newMessage]);
     setIsAiResponding(true);
+
+    if (!ai) {
+      const errorResponse: Message = {
+          id: Date.now() + 1,
+          text: "The AI service is not configured correctly. Please check the API key.",
+          sender: 'ai',
+          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      };
+      setMessages(prev => [...prev, errorResponse]);
+      setIsAiResponding(false);
+      return;
+    }
 
     try {
       const prompt = `
@@ -131,6 +144,19 @@ const App: React.FC = () => {
     localStorage.setItem('hasSeenWelcomePopup', 'true');
   };
   
+  if (!API_KEY) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-dark-bg text-dark-text font-sans">
+        <div className="text-center p-8 bg-dark-accent rounded-lg shadow-xl border border-dark-border">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Configuration Error</h1>
+          <p>The Google Gemini API key is missing.</p>
+          <p className="mt-2 text-sm text-slate-400">Please create a <code className="bg-slate-700 px-1 py-0.5 rounded">.env</code> file and add your API key.</p>
+          <p className="mt-1 text-xs text-slate-500">Example: <code className="bg-slate-700 px-1 py-0.5 rounded">API_KEY=your_api_key_here</code></p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-screen w-full font-sans text-light-text dark:text-dark-text overflow-hidden bg-gradient-to-br from-light-bg via-slate-200 to-light-bg dark:from-dark-bg dark:via-slate-950 dark:to-dark-bg animate-subtle-gradient bg-[length:200%_200%]">
       {showWelcomePopup && <WelcomePopup onClose={handleCloseWelcomePopup} />}

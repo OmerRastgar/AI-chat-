@@ -39,21 +39,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isCollapsed, setIs
       <div className="relative flex items-center p-4 border-b border-light-border dark:border-dark-border h-16 flex-shrink-0">
         
         {/* LOGO AREA */}
-        {isCollapsed && !isMobile ? (
-          <div className="w-full flex justify-center">
+        <div className={`flex items-center transition-all duration-300 w-full ${isCollapsed && !isMobile ? 'justify-center' : 'justify-start'}`}>
+          {isCollapsed && !isMobile ? (
             <img 
-              src={theme === 'dark' ? 'for dark background collapsed to thin .png' : 'for light background collapsed to thin .png'}
+              src={theme === 'dark' ? '/dark background collapsed to thin.png' : '/light background collapsed to thin.png'} 
               alt="CyberGaar Icon"
-              className="h-8 w-8"
+              className="h-8 w-8 object-contain"
             />
-          </div>
-        ) : (
-          <img 
-            src={theme === 'dark' ? 'for dark background collapsed .png' : 'for light background collapsed .png'}
-            alt="CyberGaar Logo"
-            className="h-8"
-          />
-        )}
+          ) : (
+             <img 
+              src={theme === 'dark' ? '/dark background collapsed.png' : '/light background collapsed.png'} 
+              alt="CyberGaar Logo"
+              className="h-8 object-contain"
+            />
+          )}
+        </div>
         
         {/* BUTTON AREA */}
         {!isMobile && (

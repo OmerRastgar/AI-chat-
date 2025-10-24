@@ -15,7 +15,8 @@ import ChipInput from './ChipInput';
 import PolicyLoadingView from './PolicyLoadingView';
 import PolicyResultView from './PolicyResultView';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const API_KEY = process.env.API_KEY;
+const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 // Helper to convert basic markdown to HTML for .doc export
 const markdownToHtml = (markdown: string, policyType: string, companyName: string): string => {
@@ -159,6 +160,10 @@ const PolicyGenerator: React.FC = () => {
 
     const handleGeneratePolicy = async () => {
         if (!isFormValid) return;
+        if (!ai) {
+            setError("AI client is not initialized. Please ensure the API key is configured correctly.");
+            return;
+        }
 
         setView('loading');
         setGeneratedPolicy('');
