@@ -12,7 +12,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        # Removed 18.x because your dependencies require Node 20+
+        node-version: [20.x, 22.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -25,4 +26,6 @@ jobs:
     - name: Build
       run: |
         npm install
+        # Explicitly install webpack and its CLI to avoid the npx prompt
+        npm install webpack webpack-cli
         npx webpack
