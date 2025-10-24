@@ -1,0 +1,67 @@
+import React from 'react';
+import { Tab } from '../types';
+import { ChatIcon } from './icons/ChatIcon';
+import { PolicyIcon } from './icons/PolicyIcon';
+import { ChevronLeftIcon } from './icons/ChevronLeftIcon';
+
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isCollapsed: boolean;
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  activeTab: Tab;
+  setActiveTab: (tab: Tab) => void;
+  isMobile: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed, activeTab, setActiveTab, isMobile }) => {
+
+  const NavButton: React.FC<{ tabName: Tab; children: React.ReactNode; icon: React.ReactNode }> = ({ tabName, children, icon }) => (
+    <button 
+      onClick={() => {
+        setActiveTab(tabName);
+        if(isMobile) setIsOpen(false);
+      }}
+      className={`w-full flex items-center p-3 rounded-lg transition-all duration-200 text-sm font-semibold space-x-3 ${
+        activeTab === tabName 
+        ? 'bg-primary text-white shadow-md' 
+        : 'text-light-text/80 dark:text-dark-text/80 hover:bg-light-accent-hover dark:hover:bg-dark-accent-hover'
+      } ${isCollapsed && !isMobile ? 'justify-center' : ''}`}
+    >
+      {icon}
+      <span className={`${isCollapsed && !isMobile ? 'hidden' : 'inline'}`}>{children}</span>
+    </button>
+  );
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full bg-light-accent/80 dark:bg-dark-accent/80 backdrop-blur-lg border-r border-light-border dark:border-dark-border">
+      <div className={`flex items-center p-4 border-b border-light-border dark:border-dark-border h-16 flex-shrink-0 transition-all duration-300 ${isCollapsed && !isMobile ? 'justify-center' : 'justify-between'}`}>
+        <h1 className={`text-2xl font-bold text-light-text dark:text-dark-text transition-all duration-200 ease-in-out overflow-hidden ${isCollapsed && !isMobile ? 'opacity-0 w-0' : 'opacity-100'}`}>CyberGaar</h1>
+        {!isMobile && (
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-1.5 rounded-full transition-colors duration-200 text-light-text/80 dark:text-dark-text/80 hover:bg-light-accent-hover dark:hover:bg-dark-accent-hover"
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <ChevronLeftIcon className={`h-5 w-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
+          </button>
+        )}
+      </div>
+
+      <nav className="flex-1 flex flex-col p-4 space-y-2">
+          <NavButton tabName="Chat" icon={<ChatIcon className="h-5 w-5 flex-shrink-0" />}>Chat</NavButton>
+          <NavButton tabName="Policy Generation" icon={<PolicyIcon className="h-5 w-5 flex-shrink-0" />}>Policy Generation</NavButton>
+      </nav>
+    </div>
+  );
+
+  return (
+    <aside className={`fixed top-0 left-0 h-full z-30 transition-all duration-300 ease-in-out
+      ${isMobile ? `w-4/5 max-w-xs transform ${isOpen ? 'translate-x-0' : '-translate-x-full'}` : (isCollapsed ? 'w-20' : 'w-56')}
+    `}>
+      {sidebarContent}
+    </aside>
+  );
+};
+
+export default Sidebar;

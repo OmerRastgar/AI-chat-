@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CyberGaar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#3b82f6', // blue-500
+              'primary-hover': '#2563eb', // blue-600
+
+              // Dark theme
+              'dark-bg': '#0f172a', // slate-900
+              'dark-accent': '#1e293b', // slate-800
+              'dark-accent-hover': '#334155', // slate-700
+              'dark-text': '#cbd5e1', // slate-300
+              'dark-border': '#334155', // slate-700
+
+              // Light theme
+              'light-bg': '#f1f5f9', // slate-100
+              'light-text': '#0f172a', // slate-900
+              'light-accent': '#ffffff', // white
+              'light-accent-hover': '#f8fafc', // slate-50
+              'light-border': '#e2e8f0', // slate-200
+            },
+            fontFamily: {
+              sans: ['Roboto', 'Arial', 'sans-serif'],
+            },
+            keyframes: {
+              'subtle-gradient': {
+                '0%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+                '100%': { backgroundPosition: '0% 50%' },
+              }
+            },
+            animation: {
+              'subtle-gradient': 'subtle-gradient 30s ease infinite',
+            }
+          },
+        },
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.26.0"
+  }
+}
+</script>
+<style>
+      /* Custom Scrollbar Styling */
+      /* For Webkit Browsers */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+      }
+      
+      html.dark ::-webkit-scrollbar-thumb {
+        background-color: #334155; /* slate-700 from tailwind config */
+      }
+      
+      html:not(.dark) ::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1; /* slate-300 from tailwind config */
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #3b82f6; /* primary color from tailwind config */
+      }
+
+      /* For Firefox */
+      * {
+        scrollbar-width: thin;
+      }
+
+      html.dark * {
+        scrollbar-color: #334155 transparent;
+      }
+
+      html:not(.dark) * {
+        scrollbar-color: #cbd5e1 transparent;
+      }
+
+      /* Hide default scrollbar for custom scrollbar component */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+      }
+    </style>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
