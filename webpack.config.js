@@ -21,11 +21,16 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.md$/,
+        type: 'asset/source',
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
-        generator: {
-          filename: 'assets/images/[name][hash][ext]'
-        }
       },
     ],
   },
@@ -36,17 +41,11 @@ module.exports = {
     new Dotenv(),
   ],
   devServer: {
-    static: [
-      { directory: path.join(__dirname, 'dist') },
-      // serve project root during development so images placed in repo root are available
-      { directory: path.join(__dirname) },
-    ],
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
     compress: true,
     port: 3000,
-    // bind to all interfaces so the dev container's server is reachable from the host
-    host: '0.0.0.0',
-    // allow connections from forwarded ports / other hosts (useful in remote/devcontainer setups)
-    allowedHosts: 'all',
     historyApiFallback: true,
   },
 };

@@ -13,11 +13,10 @@
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "**/*.d.ts"
+    "declarations.d.ts"
   ],
   "exclude": [
     "node_modules",
-    "vite.config.ts",
-    "vite.config.*"
+    "vite.config.ts"
   ]
 }
