@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle';
 import { SpinnerIcon } from './icons/SpinnerIcon';
 import { BotIcon } from './icons/BotIcon';
 import CustomScrollbar from './CustomScrollbar';
+import { CHAT_PLACEHOLDER, AI_THINKING, FEEDBACK_MESSAGE, DISCLAIMER_MESSAGE, CHAT_HEADER_TITLE, EXPERT_BUTTON_TEXT } from '../constants';
 
 interface InputFooterProps {
   standards: Standard[];
@@ -68,7 +69,7 @@ const InputFooter: React.FC<InputFooterProps> = ({ standards, activeStandard, se
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Your cyber companion awaits. Ask away..."
+                placeholder={CHAT_PLACEHOLDER}
                 className="flex-1 bg-transparent resize-none focus:outline-none text-light-text dark:text-dark-text placeholder-gray-500 dark:placeholder-gray-400 max-h-40"
                 rows={1}
               />
@@ -119,7 +120,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ messages, activeStandard, setActive
     <div className="flex-1 flex flex-col bg-transparent overflow-hidden">
       
       <header className={`flex-shrink-0 flex items-center justify-between p-4 border-b border-light-border/50 dark:border-dark-border/50 bg-light-accent/30 dark:bg-dark-accent/30 backdrop-blur-md h-16 z-10`}>
-        <h2 className="text-xl font-semibold text-light-text dark:text-dark-text">{activeStandard} Cybersecurity Chat</h2>
+        <h2 className="text-xl font-semibold text-light-text dark:text-dark-text">{activeStandard} {CHAT_HEADER_TITLE}</h2>
         <div className="flex items-center gap-2">
           <a
             href="https://cybergaar.com"
@@ -127,7 +128,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ messages, activeStandard, setActive
             rel="noopener noreferrer"
             className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold bg-primary text-white rounded-lg shadow-md hover:bg-primary-hover transition-colors"
           >
-            Talk to an Expert
+            {EXPERT_BUTTON_TEXT}
           </a>
           <ThemeToggle theme={theme} setTheme={setTheme} />
         </div>
@@ -148,7 +149,7 @@ const ChatArea: React.FC<ChatAreaProps> = ({ messages, activeStandard, setActive
                     <div className="max-w-[70%] p-3 md:p-4 rounded-xl shadow-md bg-light-accent dark:bg-dark-accent rounded-bl-none border border-light-border dark:border-dark-border">
                       <div className="flex items-center space-x-2">
                           <SpinnerIcon className="w-4 h-4" />
-                          <span className="text-sm italic text-light-text/80 dark:text-dark-text/80">AI is thinking...</span>
+                          <span className="text-sm italic text-light-text/80 dark:text-dark-text/80">{AI_THINKING}</span>
                       </div>
                     </div>
                   </div>
@@ -167,10 +168,10 @@ const ChatArea: React.FC<ChatAreaProps> = ({ messages, activeStandard, setActive
               isAiResponding={isAiResponding}
           />
           <p className="text-xs text-light-text/60 dark:text-dark-text/60 mt-2 px-2 sm:px-4 text-center">
-            Your quick feedback makes us smarter! 👍👎
+            {FEEDBACK_MESSAGE}
           </p>
           <p className="text-xs text-light-text/60 dark:text-dark-text/60 mt-1 px-2 sm:px-4 text-center">
-            AI can make mistakes. Consider checking important information.
+            {DISCLAIMER_MESSAGE}
           </p>
         </div>
 

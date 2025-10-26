@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const webpack = require('webpack');
+require('dotenv').config();
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
@@ -48,6 +50,11 @@ module.exports = (env, argv) => {
       template: './index.html',
     }),
     new ForkTsCheckerWebpackPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': {
+        'API_KEY': JSON.stringify(process.env.API_KEY)
+      }
+    })
   ],
   devServer: {
     static: {
@@ -56,6 +63,15 @@ module.exports = (env, argv) => {
     compress: true,
     port: 3000,
     historyApiFallback: true,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:3001',
+        secure: false,
+        changeOrigin: true,
+        logLevel: 'debug',
+      },
+    ],
   },
   };
 };

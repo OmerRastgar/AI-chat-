@@ -16,7 +16,7 @@ const ai = process.env.API_KEY ? new GoogleGenAI({ apiKey: process.env.API_KEY }
 
 app.post('/api/chat', async (req, res) => {
   if (!ai) {
-    return res.status(500).json({ error: 'AI service not configured' });
+    return res.status(500).json({ error: 'AI service not configured. Please check your API_KEY in the .env file.' });
   }
 
   const { text, activeStandard } = req.body;

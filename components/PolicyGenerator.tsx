@@ -205,12 +205,11 @@ const PolicyGenerator: React.FC = () => {
                 You are an expert cybersecurity policy writer. You will be given a 'global_context' (providing overall company details) and a 'sections_to_generate' JSON array. Each section in the array has a 'heading' and a 'template_context'.
 
                 Your task is to:
-                1. Use the 'global_context' to tailor all your responses with the specific company details provided.
-                2. Iterate through every object in the 'sections_to_generate' array.
-                3. For each section, write a formal, professional cybersecurity policy paragraph that is appropriate for the given 'heading'. Ensure the 'generated_policy' content is well-formatted markdown, including lists or tables where appropriate.
-                4. If the 'template_context' contains instructions or existing text, use it as a guide for the tone and content, but rewrite and expand upon it to be specific to the company profile in the global context. If it's empty, generate standard, high-quality content for that heading.
-                5. You must return a JSON array of the exact same length as the input array. Each object in your response array must contain two keys: 'heading' (copied verbatim from the input) and 'generated_policy' (the new policy text you wrote). Do not leave any `generated_policy` fields empty.
-            `;
+                1. Use the "global_context" to tailor all your responses with the specific company details provided.
+                2. Iterate through every object in the "sections_to_generate" array.
+                3. For each section, write a formal, professional cybersecurity policy paragraph that is appropriate for the given "heading". Ensure the "generated_policy" content is well-formatted markdown, including lists or tables where appropriate.
+                4. If the "template_context" contains instructions or existing text, use it as a guide for the tone and content, but rewrite and expand upon it to be specific to the company profile in the global context. If it's empty, generate standard, high-quality content for that heading.
+                5. You must return a JSON array of the exact same length as the input array. Each object in your response array must contain two keys: "heading" (copied verbatim from the input) and "generated_policy" (the new policy text you wrote). Do not leave any "generated_policy" fields empty.`;
             
             const requestPayload = {
                 global_context: globalContext,
