@@ -1,0 +1,102 @@
+# This is an example Nginx configuration file.
+#
+# 1. Copy this file to your Nginx server, for example:
+#    /etc/nginx/sites-available/your-domain.com
+#
+# 2. Edit the copied file and replace the placeholder values:
+#    - your-domain.com
+#    - /path/to/your/project/AI-chat-/dist
+#    - SSL certificate and key paths
+#
+# 3. Enable the site and restart Nginx.
+
+# Defines a shared memory zone to store request states for rate limiting.
+# 10m can store about 160,000 IP addresses.
+# The rate is set to 10 requests per second.
+limit_req_zone $binary_remote_addr zone=app_limit:10m rate=10r/s;
+
+# Defines the upstream application server.
+# Nginx will forward requests to this server.
+upstream my_app {
+    # Your Node.js app is running on port 3000
+    server 127.0.0.1:3000;
+}
+
+# Server block for HTTP requests on port 80
+server {
+    listen 80;
+    listen [::]:80;
+
+    # Replace with your domain name
+    server_name your-domain.com www.your-domain.com;
+
+    # Redirect all HTTP traffic to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+# Server block to catch and redirect direct requests to port 3000
+# NOTE: The best practice is to block this port with a firewall.
+# This is an alternative if a firewall is not in use.
+server {
+    listen 3000;
+    listen [::]:3000;
+    server_name your-domain.com www.your-domain.com;
+
+    return 301 https://$host$request_uri;
+}
+
+# Server block for HTTPS requests on port 443
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    # Replace with your domain name
+    server_name your-domain.com www.your-domain.com;
+
+    # --- SSL Configuration ---
+    # Replace with the path to your SSL certificate and key.
+    # You can get free certificates from Let's Encrypt using Certbot.
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256';
+    ssl_prefer_server_ciphers off;
+
+    # --- Security Headers ---
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # The root directory for your static files (your webpack build output)
+    root /path/to/your/project/AI-chat-/dist;
+    index index.html;
+
+    # Location for WebSocket connections used by webpack-dev-server
+    location /sockjs-node {
+        proxy_pass http://my_app;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_set_header Host $host;
+    }
+
+    # Location for API requests
+    location /api/ {
+        proxy_pass http://localhost:3001/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Location for all other requests
+    location / {
+        # Apply the rate limit. burst=20 allows short bursts of traffic.
+        limit_req zone=app_limit burst=20 nodelay;
+
+        # This is for your Single Page Application (SPA) routing.
+        # It tries to find a file, and if not found, falls back to index.html.
+        try_files $uri /index.html;
+    }
+}

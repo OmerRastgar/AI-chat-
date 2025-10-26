@@ -6,11 +6,6 @@ import WelcomePopup from './components/WelcomePopup';
 import { Message, Standard, Tab } from './types';
 import { STANDARDS } from './constants';
 import { MenuIcon } from './components/icons/MenuIcon';
-import { GoogleGenAI, GenerateContentResponse } from '@google/genai';
-
-const API_KEY = process.env.API_KEY;
-
-const ai = API_KEY ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -66,50 +61,27 @@ const App: React.FC = () => {
     setMessages(prev => [...prev, newMessage]);
     setIsAiResponding(true);
 
-    if (!ai) {
-      const errorResponse: Message = {
-          id: Date.now() + 1,
-          text: "The AI service is not configured correctly. Please check the API key.",
-          sender: 'ai',
-          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      };
-      setMessages(prev => [...prev, errorResponse]);
-      setIsAiResponding(false);
-      return;
-    }
-
     try {
-      const prompt = `
-        As a cybersecurity expert specializing in the ${activeStandard} framework, answer the following user query:
-        "${text}"
-        Provide a clear, concise, and accurate answer based on ${activeStandard} guidelines. Use the provided search tool to find relevant, up-to-date information and official documentation.
-        Do NOT list your sources or references in your response text. The source links will be displayed separately in the user interface.
-        If applicable, you can refer to specific controls or sections from the ${activeStandard} framework within your answer.
-        If the query is outside the scope of ${activeStandard}, clarify that and offer a response based on general cybersecurity best practices.
-      `;
-      
-      const response: GenerateContentResponse = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-        config: {
-          tools: [{googleSearch: {}}],
+      const response = await fetch('http://localhost:3001/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ text, activeStandard }),
       });
-      
-      const groundingMetadata = response.candidates?.[0]?.groundingMetadata;
-      const references = groundingMetadata?.groundingChunks
-        ?.map((chunk: any) => ({
-          title: chunk.web?.title || 'Source',
-          link: chunk.web?.uri || '#',
-        }))
-        .filter((ref: {link: string}) => ref.link !== '#');
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch AI response');
+      }
+
+      const data = await response.json();
 
       const aiResponse: Message = {
           id: Date.now() + 1,
-          text: response.text,
+          text: data.text,
           sender: 'ai',
           timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-          references: (references && references.length > 0) ? references : undefined,
+          references: data.references,
       };
       
       setMessages(prev => [...prev, aiResponse]);
@@ -118,7 +90,7 @@ const App: React.FC = () => {
         console.error("Error fetching AI response:", error);
         const errorResponse: Message = {
             id: Date.now() + 1,
-            text: "I'm sorry, but I encountered an issue while trying to generate a response. Please check your connection and API key, then try again.",
+            text: "I'm sorry, but I encountered an issue while trying to generate a response. Please check your connection and try again.",
             sender: 'ai',
             timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
         };
@@ -143,19 +115,6 @@ const App: React.FC = () => {
     setShowWelcomePopup(false);
     localStorage.setItem('hasSeenWelcomePopup', 'true');
   };
-  
-  if (!API_KEY) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-dark-bg text-dark-text font-sans">
-        <div className="text-center p-8 bg-dark-accent rounded-lg shadow-xl border border-dark-border">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">Configuration Error</h1>
-          <p>The Google Gemini API key is missing.</p>
-          <p className="mt-2 text-sm text-slate-400">Please create a <code className="bg-slate-700 px-1 py-0.5 rounded">.env</code> file and add your API key.</p>
-          <p className="mt-1 text-xs text-slate-500">Example: <code className="bg-slate-700 px-1 py-0.5 rounded">API_KEY=your_api_key_here</code></p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="relative h-screen w-full font-sans text-light-text dark:text-dark-text overflow-hidden bg-gradient-to-br from-light-bg via-slate-200 to-light-bg dark:from-dark-bg dark:via-slate-950 dark:to-dark-bg animate-subtle-gradient bg-[length:200%_200%]">

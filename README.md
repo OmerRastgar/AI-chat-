@@ -15,7 +15,8 @@ CyberGaar is a sophisticated web application designed to be an AI-powered partne
 ## Tech Stack
 
 -   **Frontend:** React, TypeScript, Tailwind CSS
--   **AI & Backend:** Google Gemini API (`@google/genai`) for language model capabilities.
+-   **Backend:** Node.js, Express
+-   **AI:** Google Gemini API (`@google/genai`)
 
 ---
 
@@ -50,31 +51,27 @@ Follow these instructions to get a copy of the project up and running on your lo
         ```
         API_KEY=YOUR_GEMINI_API_KEY_HERE
         ```
-    -   Replace `YOUR_GEMINI_API_KEY_HERE` with your actual key. The application is configured to load this variable automatically.
+    -   Replace `YOUR_GEMINI_API_KEY_HERE` with your actual key. The backend server is configured to load this variable automatically.
 
 ### Running the Application Locally
 
-Once the installation is complete, you can start the local development server. Most modern JavaScript projects use a command like this:
+Once the installation is complete, you can start the local development server, which will run both the frontend and backend concurrently:
 
 ```bash
 npm start
 ```
-or if you are using a tool like Vite:
-```bash
-npm run dev
-```
 
-This will launch the application in your default web browser, typically at an address like `http://localhost:3000` or `http://localhost:5173`.
+This will launch the application in your default web browser, typically at `http://localhost:3000`.
 
 ---
 
 ## Deployment
 
-CyberGaar is a static single-page application (SPA), making it easy to deploy to various hosting services.
+CyberGaar is a full-stack application. The frontend is a React single-page application (SPA), and the backend is a Node.js Express server.
 
 ### Build Process
 
-First, you need to create a production-ready build of the application. This process compiles and optimizes all the project files into a static `dist` or `build` folder.
+First, you need to create a production-ready build of the frontend application. This process compiles and optimizes all the project files into a static `dist` folder.
 
 ```bash
 npm run build
@@ -84,10 +81,44 @@ This command will generate the folder containing the `index.html` and all the ne
 
 ### Hosting
 
-You can deploy the contents of the generated `dist` (or `build`) folder to any static hosting provider. Popular choices include:
+When deploying, you will need to run both the backend server and serve the static frontend files.
 
--   [Vercel](https://vercel.com/)
--   [Netlify](https://www.netlify.com/)
--   [GitHub Pages](https://pages.github.com/)
+-   **Backend:** The backend server can be run using `node server.mjs`. You should use a process manager like `pm2` to keep the server running.
+-   **Frontend:** The `dist` folder can be served by a web server like Nginx.
 
-**Important:** When deploying, you must configure your **environment variables** in your hosting provider's dashboard. Add a variable with the key `API_KEY` and set its value to your Google Gemini API key. This is crucial for the deployed application to be able to make calls to the Gemini API.
+**Important:** When deploying, you must configure your **environment variables** on your server. The backend server expects the `API_KEY` to be available as an environment variable.
+
+### Deployment with Nginx
+
+For self-hosting on a virtual private server (VPS), using Nginx as a reverse proxy is highly recommended. It can handle SSL termination, rate limiting, and efficiently serve the static frontend files while proxying API requests to the backend server.
+
+An example Nginx configuration is provided in `nginx.conf.example`. This configuration serves the static files from the `dist` directory and proxies all requests to `/api/` to the backend server running on port 3001.
+
+1.  **Copy the Nginx Configuration**
+
+    After cloning this repository onto your server, copy the example configuration file from the project directory to Nginx's `sites-available` directory.
+
+    ```bash
+    # From within the project's root directory on your server:
+    sudo cp nginx.conf.example /etc/nginx/sites-available/your-domain.com
+    ```
+    Remember to replace `your-domain.com` with a filename that makes sense for your setup (e.g., your actual domain).
+
+2.  **Edit the Configuration**
+
+    On your server, edit the new configuration file. You will need to replace the placeholder values for `server_name`, the `root` path to your project's `dist` folder, and the paths to your `ssl_certificate` and `ssl_certificate_key`.
+
+3.  **Enable the Site and Reload Nginx**
+
+    Create a symbolic link from `sites-available` to `sites-enabled`, test the configuration, and then reload Nginx.
+
+    ```bash
+    # Create the symlink to enable the site
+    sudo ln -s /etc/nginx/sites-available/your-domain.com /etc/nginx/sites-enabled/
+
+    # Test the Nginx configuration for syntax errors
+    sudo nginx -t
+
+    # If the test is successful, reload Nginx to apply the changes
+    sudo systemctl reload nginx
+    ```

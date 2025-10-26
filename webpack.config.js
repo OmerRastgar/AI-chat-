@@ -1,9 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-module.exports = {
+module.exports = (env, argv) => {
+  const isProduction = argv.mode === 'production';
+
+  return {
   context: __dirname,
+  mode: isProduction ? 'production' : 'development',
   entry: './index.tsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -13,11 +17,16 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
+  devtool: isProduction ? 'source-map' : 'eval-cheap-module-source-map',
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        loader: 'ts-loader',
+        options: {
+          // disable type checker - we will use it in fork plugin
+          transpileOnly: true,
+        },
         exclude: /node_modules/,
       },
       {
@@ -38,7 +47,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './index.html',
     }),
-    new Dotenv(),
+    new ForkTsCheckerWebpackPlugin(),
   ],
   devServer: {
     static: {
@@ -48,4 +57,5 @@ module.exports = {
     port: 3000,
     historyApiFallback: true,
   },
+  };
 };
