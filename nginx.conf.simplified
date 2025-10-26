@@ -1,0 +1,26 @@
+# Server block for HTTP requests on port 80
+server {
+    listen 80;
+    listen [::]:80;
+
+    # Your domain name
+    server_name ai.cybergaar.com;
+
+    # The root directory for your static files
+    root /workspaces/AI-chat-/dist;
+    index index.html;
+
+    # Location for API requests
+    location /api/ {
+        proxy_pass http://localhost:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Location for all other requests (serving the SPA)
+    location / {
+        try_files $uri /index.html;
+    }
+}
